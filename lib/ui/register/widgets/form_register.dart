@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:register/model/new_client.dart';
+import 'package:register/services/send_mail_service.dart';
 import 'build_input_field.dart';
 
 class FormRegister extends StatefulWidget {
@@ -9,17 +11,24 @@ class FormRegister extends StatefulWidget {
 }
 
 class _FormRegisterState extends State<FormRegister> {
+
   final _formKey = GlobalKey<FormState>();
   bool _mostrarResponsavel = false;
+
+  final _nameController = TextEditingController();
+  final _cnpjController = TextEditingController();
+  final _responsibleNameController = TextEditingController();
+  final _responsibleEmaiController = TextEditingController();
+  final _responsiblePhoneController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Form(
           key: _formKey,
           child: Column(
             children: [
-              BuildInputField('Nome da Empresa'),
+              BuildInputField('Nome da Empresa', controller: _nameController,),
               const SizedBox(height: 16),
-              BuildInputField('CNPJ'),
+              BuildInputField('CNPJ', controller: _cnpjController,),
               const SizedBox(height: 24),
               GestureDetector(
                 onTap: () {
@@ -57,11 +66,11 @@ class _FormRegisterState extends State<FormRegister> {
                         key: const ValueKey('responsavel'),
                         children: [
                           const SizedBox(height: 16),
-                          BuildInputField('Nome do Responsável'),
+                          BuildInputField('Nome do Responsável', controller: _responsibleNameController,),
                           const SizedBox(height: 16),
-                          BuildInputField('Email do Responsável'),
+                          BuildInputField('Email do Responsável', controller: _responsibleEmaiController),
                           const SizedBox(height: 16),
-                          BuildInputField('Telefone do Responsável'),
+                          BuildInputField('Telefone do Responsável', controller: _responsiblePhoneController),
                         ],
                       )
                     : const SizedBox.shrink(),
@@ -79,7 +88,19 @@ class _FormRegisterState extends State<FormRegister> {
                   ),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      // salvar os dados
+                      final newClient = _mostrarResponsavel
+                      ? NewClient(
+                          name: _nameController.text,
+                          cnpj: _cnpjController.text,
+                          responsibleName: _responsibleNameController.text,
+                          responsibleEmail: _responsibleEmaiController.text,
+                          responsiblephone: _responsiblePhoneController.text,
+                        )
+                      : NewClient.unresponsible(
+                          name: _nameController.text,
+                          cnpj: _cnpjController.text,
+                        );
+                      SendMailService().sendMail(newClient);
                     }
                   },
                   child: const Text(

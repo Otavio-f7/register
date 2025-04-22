@@ -22,7 +22,7 @@ class RegisterScreen extends StatelessWidget {
               children: [
                 Center(child: Image.asset('assets/logo/logo-colorido.webp')),
                 Text(
-                    'Seja Bem vindo Parcero',
+                    'Seja Bem-vindo Parceiro!',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 25,
